@@ -12,7 +12,6 @@ public class StackArray<T> {
     private static final int GROW_FACTOR = 2;
 
 
-
     //不带初始容量的构造方法。默认容量为8
     public StackArray() {
          this.capacity = 8;
@@ -45,8 +44,8 @@ public class StackArray<T> {
         capacity = newCapcity;
     }
 
-    //TODO：返回栈顶元素并出栈
-    private T pop() {
+    //返回栈顶元素并出栈
+    public T pop() {
         if(isEmpty()){
             throw new IllegalArgumentException("Stack is empty.");
         }
@@ -55,7 +54,7 @@ public class StackArray<T> {
     }
 
     //返回栈顶元素不出栈
-    private T peek() {
+    public T peek() {
         if(isEmpty()){
             throw new IllegalArgumentException("Stack is empty.");
         }
@@ -63,7 +62,7 @@ public class StackArray<T> {
     }
 
     //判断栈是否为空
-    private boolean isEmpty() {
+    public boolean isEmpty() {
         return count == 0;
     }
 
