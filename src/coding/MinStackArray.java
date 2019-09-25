@@ -1,92 +1,62 @@
 package coding;
 
-import java.util.Arrays;
 
 /**
- * 模拟实现栈 数组
+ * 模拟实现最小栈
+ * 用两个栈，A正常，B备胎，第一次进入的元素，进入A，B记录最小值，此后，每次入栈，都对数据进行校验，如果比B的出栈小，就入B栈。每次出栈时，如果出的是A的最小值 B跟着出栈
  */
-public class StackArray<T> {
-    private T[] storage;//存放栈中元素的数组
-    private int capacity;//栈的容量
-    private int count;//栈中元素数量
-    private static final int GROW_FACTOR = 2;
+public class MinStackArray<T> {
+    private StackArray<Integer> mainStack = new StackArray<Integer>();
+    private StackArray<Integer> minStack = new StackArray<Integer>();
 
-    
-    //不带初始容量的构造方法。默认容量为8
-    public StackArray() {
-         this.capacity = 8;
-         this.storage = (T[]) new Object[8];
-         this.count = 0;
-    }
-
-    //带初始容量的构造方法
-    public StackArray(int initialCapacity) {
-        if(initialCapacity<1){
-            throw new IllegalArgumentException("too small initialCapacity");
+    /**
+     * 入栈操作
+     *
+     * @param element 入栈的元素
+     */
+    public void push(int element) {
+        mainStack.push(element);
+        //如果辅助栈为空，或者新元素小于或等于辅助栈栈顶，则将新元素压入辅助栈
+        if (minStack.isEmpty() || element <= minStack.peek()) {
+            minStack.push(element);
         }
-        this.capacity = initialCapacity;
-        this.storage = (T[]) new Object[initialCapacity];
-        this.count = 0;
     }
 
-    //入栈
-    public void push(T value) {
-        if(capacity == count){
-            ensureCapacity();
+    /**
+     * 出栈
+     */
+    public Integer pop() {
+        //如果出栈元素和辅助栈栈顶元素值相等，辅助栈出栈
+        if (mainStack.peek().equals(minStack.peek())) {
+            minStack.pop();
         }
-        storage[count++] = value;
+        return mainStack.pop();
     }
 
-    //确保容量大小
-    private void ensureCapacity() {
-        int newCapcity = capacity * GROW_FACTOR;
-        storage = Arrays.copyOf(storage,newCapcity);
-        capacity = newCapcity;
-    }
-
-    //TODO：返回栈顶元素并出栈
-    private T pop() {
-        if(isEmpty()){
-            throw new IllegalArgumentException("Stack is empty.");
+    /**
+     * 获取栈的最小元素
+     */
+    public int getMin() throws Exception {
+        if (mainStack.isEmpty()) {
+            throw new Exception("stack is empty");
         }
-        count--;
-        return storage[count];
+
+        return minStack.peek();
     }
 
-    //返回栈顶元素不出栈
-    private T peek() {
-        if(isEmpty()){
-            throw new IllegalArgumentException("Stack is empty.");
-        }
-        return storage[count -1 ];
+    public static void main(String[] args) throws Exception {
+        MinStackArray stack = new MinStackArray();
+        stack.push(4);
+        stack.push(9);
+        stack.push(7);
+        stack.push(3);
+        stack.push(8);
+        stack.push(5);
+        System.out.println(stack.getMin());
+        stack.pop();
+        stack.pop();
+        stack.pop();
+        System.out.println(stack.getMin());
     }
 
-    //判断栈是否为空
-    private boolean isEmpty() {
-        return count == 0;
-    }
-
-    //返回栈中元素的个数
-    private int size() {
-        return count;
-    }
-
-    public static void main(String[] args) {
-        StackArray<Integer> myStack = new StackArray<Integer>(3);
-        myStack.push(1);
-        myStack.push(2);
-        myStack.push(3);
-        myStack.push(4);
-        myStack.push(5);
-        myStack.push(6);
-        myStack.push(7);
-        myStack.push(8);
-        System.out.println(myStack.peek());//8
-        System.out.println(myStack.size());//8
-        for (int i = 0; i < 8; i++) {
-            System.out.println(myStack.pop());
-        }
-        System.out.println(myStack.isEmpty());//true
-        myStack.pop();//报错：java.lang.IllegalArgumentException: Stack is empty.
-    }
 }
